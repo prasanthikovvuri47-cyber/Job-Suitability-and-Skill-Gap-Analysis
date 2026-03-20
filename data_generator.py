@@ -90,20 +90,26 @@ def generate_data():
                 importance[skill] = 'Low'
         skill_importance_dict[job] = importance
 
-    # Generate 5000 rows Custom dataset
+    # Generate 15000 rows - more data per class for accurate predictions
     data = []
     educations = ['btech', 'bsc', 'mtech', 'mba', 'diploma']
     
-    for _ in range(5000):
+    for _ in range(15000):
         target_job = random.choice(job_roles)
         req_skills = learning_path_dict[target_job]
+        core_skills_list = req_skills[:len(req_skills)//2 + 1]  # the most important skills
         
-        # Simulate user having a subset of required skills, plus some random ones
-        num_have = random.randint(min(2, len(req_skills)), len(req_skills))
-        user_skills_list = random.sample(req_skills, k=num_have)
+        # Always include at least 2 core (high-importance) skills to ensure signal
+        must_have = random.sample(core_skills_list, k=min(2, len(core_skills_list)))
         
-        # Add random noise skills
-        if random.random() > 0.5:
+        # Then optionally add more skills from the full required list
+        remaining = [s for s in req_skills if s not in must_have]
+        num_extra = random.randint(0, len(remaining))
+        extra = random.sample(remaining, k=num_extra)
+        user_skills_list = must_have + extra
+        
+        # Add very little noise (20% chance) to not confuse the model
+        if random.random() > 0.8:
             user_skills_list.append(random.choice(generic_skills))
             
         skills_str = ", ".join(user_skills_list).lower().strip()
