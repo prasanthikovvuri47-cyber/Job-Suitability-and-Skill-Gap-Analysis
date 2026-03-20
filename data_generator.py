@@ -11,7 +11,8 @@ def generate_data():
     areas = ['Data', 'Frontend', 'Backend', 'Full Stack', 'Cloud', 'DevOps', 'Machine Learning', 
              'Security', 'Database', 'Mobile', 'AI', 'Network', 'UI/UX', 'Product', 'QA', 
              'System', 'Game', 'Embedded', 'Blockchain', 'Web3', 'Hardware', 'Firmware', 
-             'AR/VR', 'Business', 'Marketing']
+             'AR/VR', 'Business', 'Marketing', 'GenAI', 'MLOps', 'Data Science', 'SRE',
+             'Robotics', 'IoT', 'Prompt Engineering', 'Cybersecurity', 'Cloud Native']
     roles = ['Engineer', 'Developer', 'Analyst']
     
     job_roles = []
@@ -44,7 +45,16 @@ def generate_data():
         'Firmware': ['c', 'c++', 'assembly', 'microcontrollers', 'debugging', 'rtos'],
         'AR/VR': ['c#', 'c++', 'unity', 'unreal engine', '3d modeling', 'mathematics'],
         'Business': ['excel', 'sql', 'business analysis', 'communication', 'tableau', 'power bi'],
-        'Marketing': ['seo', 'content strategy', 'google analytics', 'social media', 'communication', 'crm']
+        'Marketing': ['seo', 'content strategy', 'google analytics', 'social media', 'communication', 'crm'],
+        'GenAI': ['langchain', 'openai api', 'prompt engineering', 'huggingface', 'rag', 'vector databases', 'llm', 'python'],
+        'MLOps': ['mlflow', 'kubeflow', 'airflow', 'model monitoring', 'docker', 'dvc', 'ci/cd', 'python'],
+        'Data Science': ['r', 'statistics', 'a/b testing', 'feature engineering', 'hypothesis testing', 'python', 'tableau', 'sql'],
+        'SRE': ['slo', 'sla', 'incident management', 'prometheus', 'grafana', 'chaos engineering', 'linux', 'python'],
+        'Robotics': ['ros', 'python', 'c++', 'sensor fusion', 'kinematics', 'matlab', 'linux'],
+        'IoT': ['arduino', 'raspberry pi', 'mqtt', 'c', 'sensors', 'edge computing', 'python', 'networking'],
+        'Prompt Engineering': ['chatgpt', 'prompt design', 'llm fine-tuning', 'openai', 'langchain', 'python', 'nlp'],
+        'Cybersecurity': ['ethical hacking', 'wireshark', 'kali linux', 'splunk', 'siem', 'owasp', 'networking', 'linux'],
+        'Cloud Native': ['terraform', 'helm', 'istio', 'argocd', 'microservices', 'kubernetes', 'docker', 'service mesh']
     }
     
     # Generic skills for filling
