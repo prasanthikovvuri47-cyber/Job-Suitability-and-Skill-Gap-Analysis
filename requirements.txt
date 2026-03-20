@@ -1,5 +1,6 @@
-pandas
-numpy
+pandas==2.3.3
+numpy==2.2.6
 scikit-learn==1.7.2
-streamlit
-matplotlib
+streamlit==1.55.0
+matplotlib==3.10.8
+altair==6.0.0
