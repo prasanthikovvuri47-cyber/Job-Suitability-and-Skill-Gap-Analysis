@@ -1,6 +1,50 @@
 import json
 import pickle
+import re
 import numpy as np
+
+# ==========================================
+# SHARED PREPROCESSING FUNCTIONS
+# These MUST match the preprocessing in model_trainer.py
+# ==========================================
+
+def clean_text(text):
+    """
+    Text Cleaning: lowercase, remove special characters, strip extra spaces.
+    Mirrors model_trainer.py clean_text exactly.
+    """
+    if not isinstance(text, str):
+        return ""
+    text = text.lower()
+    text = re.sub(r'[^a-z0-9\s,]', '', text)
+    text = " ".join(text.split())
+    return text
+
+def standardize_tokens(text):
+    """
+    Token Handling & Standardization: split by comma, apply standard naming.
+    Mirrors model_trainer.py standardize_tokens exactly.
+    """
+    tokens = [t.strip() for t in text.split(',') if t.strip()]
+    
+    replacements = {
+        'ml': 'machine learning',
+        'js': 'javascript',
+        'ai': 'artificial intelligence'
+    }
+    
+    standardized = [replacements.get(t, t) for t in tokens]
+    return ", ".join(standardized)
+
+def preprocess_input(text):
+    """
+    Full preprocessing pipeline for user input.
+    Applies the same cleaning + standardization used during training.
+    """
+    text = clean_text(text)
+    text = standardize_tokens(text)
+    return text
+
 
 class CareerAdvisorLogic:
     def __init__(self):
@@ -21,8 +65,8 @@ class CareerAdvisorLogic:
             self.skill_importance = json.load(f)
             
     def predict_top_jobs(self, skills_str, education, experience):
-        # Clean skills
-        skills_clean = skills_str.lower().strip()
+        # Apply the SAME preprocessing pipeline used in training
+        skills_clean = preprocess_input(skills_str)
         
         # Transform inputs
         sk_tfidf = self.tfidf.transform([skills_clean]).toarray()
@@ -30,7 +74,7 @@ class CareerAdvisorLogic:
         # Handle unknown education gracefully
         try:
             edu_enc = self.edu_encoder.transform([education.lower()])[0]
-        except:
+        except Exception:
             edu_enc = 0
             
         X_input = np.hstack((sk_tfidf, [[edu_enc]], [[experience]]))
@@ -63,7 +107,6 @@ class CareerAdvisorLogic:
 
     def get_learning_path(self, target_job, missing_skills):
         ordered_path = self.learning_path.get(target_job, [])
-        # Ordered missing skills
         final_path = [skill for skill in ordered_path if skill in missing_skills]
         return final_path
         

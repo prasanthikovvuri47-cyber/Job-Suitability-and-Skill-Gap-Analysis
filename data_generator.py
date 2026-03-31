@@ -90,11 +90,18 @@ def generate_data():
                 importance[skill] = 'Low'
         skill_importance_dict[job] = importance
 
-    # Generate 15000 rows - more data per class for accurate predictions
+    # Generate 5000 rows with some synthetic noise
     data = []
     educations = ['btech', 'bsc', 'mtech', 'mba', 'diploma']
     
-    for _ in range(15000):
+    # Global irrelevant skills pool to introduce realistic noise
+    irrelevant_skills_pool = [
+        'photography', 'cooking', 'yoga', 'driving', 'public speaking', 
+        'event planning', 'scuba diving', 'first aid', 'french', 'spanish',
+        'knitting', 'woodworking', 'calligraphy', 'poker', 'chess'
+    ]
+
+    for _ in range(5000):
         target_job = random.choice(job_roles)
         req_skills = learning_path_dict[target_job]
         core_skills_list = req_skills[:len(req_skills)//2 + 1]  # the most important skills
@@ -108,11 +115,31 @@ def generate_data():
         extra = random.sample(remaining, k=num_extra)
         user_skills_list = must_have + extra
         
-        # Add very little noise (20% chance) to not confuse the model
+        # TASK: Add 1-4 irrelevant skills (60% chance) to increase noise
+        if random.random() < 0.6:
+            num_irr = random.randint(1, 4)
+            user_skills_list.extend(random.sample(irrelevant_skills_pool, k=num_irr))
+            
+        # Add generic skills
         if random.random() > 0.8:
             user_skills_list.append(random.choice(generic_skills))
             
-        skills_str = ", ".join(user_skills_list).lower().strip()
+        # Introduce synthetic noise for preprocessing demonstration
+        random.shuffle(user_skills_list)
+        skills_str = ", ".join(user_skills_list)
+        
+        noise_chance = random.random()
+        if noise_chance < 0.1:
+            skills_str = skills_str.upper() # Uppercase noise
+        elif noise_chance < 0.2:
+            skills_str = skills_str + "!!!" # Special character noise
+        elif noise_chance < 0.3:
+            skills_str = skills_str.replace("machine learning", "ML").replace("javascript", "JS")
+        elif noise_chance < 0.4:
+            skills_str = "   " + skills_str + "    " # Extra spaces
+        elif noise_chance < 0.5:
+            skills_str = skills_str.replace(",", " , ") # Extra spaces around commas
+            
         education = random.choice(educations)
         
         # Adjust experience based roughly on education and job reality
@@ -120,6 +147,12 @@ def generate_data():
             exp = random.randint(2, 10)
         else:
             exp = random.randint(0, 10)
+            
+        # Introduce occasional NaN for preprocessing demonstration (2% chance)
+        if random.random() < 0.02:
+            skills_str = np.nan
+        if random.random() < 0.02:
+            exp = np.nan
             
         data.append({
             'skills': skills_str,
@@ -129,6 +162,10 @@ def generate_data():
         })
         
     df = pd.DataFrame(data)
+    
+    # Intentionally duplicate some random rows to test 'drop_duplicates'
+    duplicates = df.sample(n=50, replace=True, random_state=42)
+    df = pd.concat([df, duplicates], ignore_index=True)
     
     # Save CSV
     df.to_csv("career_data.csv", index=False)
